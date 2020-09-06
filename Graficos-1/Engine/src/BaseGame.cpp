@@ -50,6 +50,7 @@ void BaseGame::Loop() {
 		lastFrame = currentFrame;
 		//------------------------------
 		loop = OnUpdate();
+		render->f->UpdateFrustum(render->GetProjMatrix() * cam->GetViewMatrix());
 		render->ClearScreen();
 		OnDraw();
 		render->SwapBuffer();

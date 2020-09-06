@@ -9,7 +9,7 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-
+#include "Frustum.h"
 Sprite* sq;
 Sprite* spr;
 Shader* shad;
@@ -21,13 +21,15 @@ SpotLight* spotLight;
 list<Light*>* lightsList;
 list<Light*>* lightsToShowList;
 
-vec3 plpos = { 1.5f,0.f,0.f };
+vec3 plpos = { 0.f,0.f,0.f };
+
+
 
 bool Game::OnStart()
 {	
 	render->setClearScreenColor(1.f, 0.f, 1.f,1.f);
 	
-	sq = new Sprite(render, 1, 1, 1);
+	/*sq = new Sprite(render, 1, 1, 1);
 	Material* sqmat = new Material();
 	sqmat->LoadShaders("src/TextureVertexShader.txt", "src/TextureFragmentShader.txt");
 	sq->SetMaterial(sqmat);
@@ -39,7 +41,7 @@ bool Game::OnStart()
 	sprmat->LoadShaders("src/TextureVertexShader.txt", "src/TextureFragmentShader.txt");
 	spr->SetMaterial(sprmat);
 	spr->LoadMaterial("res/megaman.png",true);
-	spr->SetPos(-10.0f, 0.0f, -10.0f);
+	spr->SetPos(-10.0f, 0.0f, -10.0f);*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -55,29 +57,29 @@ bool Game::OnStart()
 
 	cam->SetCameraSpeed(2.5f);
 	
-	m = new Model("res/backpack/backpack.obj", true);
+	m = new Model("res/Planes/PlanesZneg.fbx", false);
 
-	m2 = new Model("res/spider/Only_Spider_with_Animations_Export.obj", true);
+	m2 = new Model("res/backpack/backpack.obj", true);
 
-	m3 = new Model("res/nave/E 45 Aircraft_obj.obj", false);
+	m3 = new Model("res/backpack/backpack.obj", true);
 
-	m4 = new Model("res/nave2/Intergalactic_Spaceship-(Wavefront).obj", false);
+	m4 = new Model("res/backpack/backpack.obj", true);
 
-	m2->SetPos(vec3(5.f, 0.f, 0.f));
+	movableEntity = new Model("res/backpack/backpack.obj", true);
 
-	m3->SetPos(vec3(-5.f, 0.f, 0.f));
+	//m->SetRot(90, vec3(0.f, 1.f, 0.f));
 
-	m4->SetPos(vec3(0.f, 0.f, 5.f));
+	m2->SetPos(vec3(-15.f, 0.f, 0.f));
 
-	m2->SetScale(vec3(0.01f));
+	m3->SetPos(vec3(15.f, 0.f, 0.f));
 
-	m4->SetScale(vec3(0.5f));
-	
-	/*m2->SetParent(m);
-	
-	m3->SetParent(m);
-	
-	m4->SetParent(m);*/
+	m4->SetPos(vec3(0.f, 0.f, -15.f));
+
+	//m3->SetPos(vec3(0.f, 0.f, -10.f));
+
+	/*m3 = new Model("res/nave/E 45 Aircraft_obj.obj", false);
+
+	m4 = new Model("res/nave2/Intergalactic_Spaceship-(Wavefront).obj", false);*/
 
 	lightsList = new list<Light*>();
 	
@@ -99,15 +101,12 @@ bool Game::OnStart()
 		(*iB)->SetDiffuse(diffuse);
 		(*iB)->SetSpecular(specular);
 	}
-
 	
 	return true;
 }
 
 vec2 prevPos;
 
-
-float xPos = 0.0f;
 float yRot = 0.0f;
 
 float yRot2 = 0.f;
@@ -115,13 +114,6 @@ float yRot2 = 0.f;
 float at = 1.0f;
 
 vec3 newscale = { 1.f,1.f,1.f };
-
-Entity3D* m5;
-Entity3D* m6;
-
-Entity3D* grupo;
-Entity3D* gruposub1;
-Entity3D* gruposub2;
 
 bool Game::OnUpdate()
 {
@@ -170,147 +162,48 @@ bool Game::OnUpdate()
 	{
 		plpos.x += BaseGame::GetDeltaTime() * 100.0f;
 	}
-	if (Input::GetKeyPressed(GLFW_KEY_5))
-	{
-		m5 = BaseGame::GetRootEntity()->GetChild("Cylinder.034__0");
-		//GetRootEntity()->GetAllChildsTypes();
-		//m2->SetParent(m5);
-		m6 = BaseGame::GetRootEntity()->GetChild("Cylinder.029__0");
-		m5->SetParent(m6);
-	}
-
-	if (Input::GetKeyPressed(GLFW_KEY_6))
-	{
-		grupo = BaseGame::GetRootEntity()->GetChild("group");
-		gruposub1 = BaseGame::GetRootEntity()->GetChild("Cube.037__0");
-		gruposub2 = BaseGame::GetRootEntity()->GetChild("Cylinder.033__0");
-	}
 	
 	if(Input::GetKeyPressed(GLFW_KEY_SPACE))
 	{
 		newscale = vec3(1.f, 1.f, 1.f) + vec3(10.f) * BaseGame::GetDeltaTime();
-		m3->SetScale(newscale);
+		m->SetScale(newscale);
 	}
 	
 	if (Input::GetKeyPressed(GLFW_KEY_C))
 	{
 		newscale = vec3(1.f, 1.f, 1.f) - vec3(10.f) * BaseGame::GetDeltaTime();
-		m3->SetScale(newscale);
+		m->SetScale(newscale);
 	}
 
 	if(Input::GetKeyReleased(GLFW_KEY_F))
 	{
 		spotLight->SetActive(!spotLight->GetActive());
 	}
-
-	if (Input::GetKeyReleased(GLFW_KEY_T))
-	{
-		grupo->SetPos(vec3(100.f*BaseGame::GetDeltaTime(), 0.f, 0.f));
-	}
-	if (Input::GetKeyReleased(GLFW_KEY_Y))
-	{
-		gruposub1->SetPos(vec3(100.f*BaseGame::GetDeltaTime(), 0.f, 0.f));
-	}
-	if (Input::GetKeyReleased(GLFW_KEY_U))
-	{
-		gruposub2->SetPos(vec3(-100.f*BaseGame::GetDeltaTime(), 0.f, 0.f));
-	}
-
-	if (Input::GetKeyReleased(GLFW_KEY_N))
-	{
-		newscale = vec3(1.f, 1.f, 1.f) + vec3(10.f) * BaseGame::GetDeltaTime();
-		grupo->SetScale(newscale);
-	}
-	if (Input::GetKeyReleased(GLFW_KEY_M))
-	{
-		newscale = vec3(1.f, 1.f, 1.f) - vec3(10.f) * BaseGame::GetDeltaTime();
-		grupo->SetScale(newscale);
-	}
 	
-	//model translation
-	if (Input::GetKeyPressed(GLFW_KEY_RIGHT))
-	{
-		/*if (!CollisionManager::CheckCollision(spr, sq))
-		{
-			prevPos = spr->GetPos();
-			spr->Translate(0.01f, 0.0f, 0.0f);
-		}
-		else
-			spr->SetPos(prevPos.x,prevPos.y, spr->GetPos().z);
-
-		spr->UpdAnim(1);*/
-
-		if (yRot < 0.0f)
-			yRot = 0.0f;
-		
-		yRot = 100.0f * BaseGame::GetDeltaTime();
-		if(m5)
-			m5->SetPos(vec3(yRot,0.f,0.f));
-	}
-	/*else
-	{
-		spr->UpdAnim(0);
-	}*/
 	if (Input::GetKeyPressed(GLFW_KEY_LEFT))
 	{
-		/*if (!CollisionManager::CheckCollision(spr, sq))
-		{
-			prevPos = spr->GetPos();
-			spr->Translate(-0.01f, 0.0f, 0.0f);
-		}
-		else
-			spr->SetPos(prevPos.x, prevPos.y, spr->GetPos().z);*/
-
-		if(yRot>0.0f)
-			yRot = 0.0f;
-		
-		yRot = -100.0f * BaseGame::GetDeltaTime();
-		if (m5)
-			m5->SetPos(vec3(yRot, 0.f, 0.f));
+		yRot2 = 100.0f * BaseGame::GetDeltaTime();
+		movableEntity->SetPos(vec3(yRot2, 0.f, 0.f));
 	}
 
-	
+	if (Input::GetKeyPressed(GLFW_KEY_RIGHT))
+	{
+		yRot2 = -100.0f * BaseGame::GetDeltaTime();
+		movableEntity->SetPos(vec3(yRot2, 0.f, 0.f));
+	}
+
 	if (Input::GetKeyPressed(GLFW_KEY_UP))
 	{
-		if (!CollisionManager::CheckCollision(spr, sq))
-		{
-			prevPos = spr->GetPos();
-			spr->Translate(0.0f, 0.01f, 0.0f);
-
-		}
-
-		else
-			spr->SetPos(prevPos.x, prevPos.y, spr->GetPos().z);
-
-		if (yRot2 < 0.0f)
-			yRot2 = 0.0f;
-		
 		yRot2 = 100.0f * BaseGame::GetDeltaTime();
-		m->SetRot(yRot2,vec3(0.f,1.f,0.f));
-		m2->SetRot(yRot2, vec3(0.f, 1.f, 0.f));
-		m3->SetRot(yRot2, vec3(0.f, 1.f, 0.f));
-		m4->SetRot(yRot2, vec3(0.f, 1.f, 0.f));
+		movableEntity->SetPos(vec3(0.f, 0.f, yRot2));
 	}
+
 	if (Input::GetKeyPressed(GLFW_KEY_DOWN))
 	{
-		if (!CollisionManager::CheckCollision(spr, sq))
-		{
-			prevPos = spr->GetPos();
-			spr->Translate(0.0f, -0.01f, 0.0f);
-		}
-		else
-			spr->SetPos(prevPos.x, prevPos.y, spr->GetPos().z);
-
-		if (yRot2 > 0.0f)
-			yRot2 = 0.0f;
-
 		yRot2 = -100.0f * BaseGame::GetDeltaTime();
-		m->SetRot(yRot2, vec3(0.f, 1.f, 0.f));
-		m2->SetRot(yRot2, vec3(0.f, 1.f, 0.f));
-		m3->SetRot(yRot2, vec3(0.f, 1.f, 0.f));
-		m4->SetRot(yRot2, vec3(0.f, 1.f, 0.f));
+		movableEntity->SetPos(vec3(0.f, 0.f, yRot2));
 	}
-	
+
 	if (Input::GetKeyPressed(GLFW_KEY_ESCAPE))
 	{
 		return false;
@@ -321,8 +214,8 @@ bool Game::OnUpdate()
 
 void Game::OnDraw()
 {
-	sq->Draw();
-	spr->Draw();
+	/*sq->Draw();
+	spr->Draw();*/
 	BaseGame::GetRootEntity()->Draw(*shad);
 }
 

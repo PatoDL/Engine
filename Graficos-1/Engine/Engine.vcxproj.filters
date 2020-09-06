@@ -81,6 +81,12 @@
     <ClCompile Include="src\LightManager.cpp">
       <Filter>Cpps</Filter>
     </ClCompile>
+    <ClCompile Include="src\Frustum.cpp">
+      <Filter>Cpps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BSPPlane.cpp">
+      <Filter>Cpps</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseGame.h">
@@ -153,6 +159,12 @@
       <Filter>Hpps</Filter>
     </ClInclude>
     <ClInclude Include="src\LightManager.h">
+      <Filter>Hpps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frustum.h">
+      <Filter>Hpps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BSPPlane.h">
       <Filter>Hpps</Filter>
     </ClInclude>
   </ItemGroup>

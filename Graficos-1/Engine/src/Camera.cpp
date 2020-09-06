@@ -63,7 +63,14 @@ void Camera::UpdateCamera()
 	}
 
 	if (moved)
+	{
 		LookAt();
+		for (int i = 0; i < Renderer::planes.size(); i++)
+		{
+			Renderer::planes[i]->CheckPositionWithPlane(GetCameraPosition(), true);
+		}
+	}
+		
 }
 
 glm::vec3 Camera::GetCameraPosition()

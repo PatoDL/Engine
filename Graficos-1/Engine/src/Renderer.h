@@ -7,6 +7,8 @@
 #include <glfw3.h>
 #include <iostream>
 #include "Camera.h"
+#include "Frustum.h"
+#include "BSPPlane.h"
 
 using namespace std;
 using namespace glm;
@@ -23,7 +25,8 @@ private:
 	glm::mat4 WorldMatrix;
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 WVP;
-	
+	list<string> CulledEntities;
+
 public:
 	bool Start(Window* wnd);
 	bool Stop();
@@ -46,7 +49,15 @@ public:
 	Camera* GetCam();
 	glm::mat4 GetProjMatrix();
 
+	Frustum* f;
+
+	void CheckListedAndAddIfNot(string name);
+	void CheckListedAndRemoveIfIs(string name);
+
 	static Renderer* renderer;
+
+	static vector<BSPPlane*> planes;
+
 	Renderer();
 	~Renderer();
 };

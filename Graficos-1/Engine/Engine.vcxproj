@@ -145,6 +145,7 @@
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\AssimpImporter.cpp" />
     <ClCompile Include="src\BaseGame.cpp" />
+    <ClCompile Include="src\BSPPlane.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\CollisionBox.cpp" />
     <ClCompile Include="src\CollisionManager.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\Entity3D.cpp" />
+    <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LightManager.cpp" />
@@ -170,6 +172,7 @@
     <ClInclude Include="src\Animation.h" />
     <ClInclude Include="src\AssimpImporter.h" />
     <ClInclude Include="src\BaseGame.h" />
+    <ClInclude Include="src\BSPPlane.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\CollisionBox.h" />
     <ClInclude Include="src\CollisionManager.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="src\DirectionalLight.h" />
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\Entity3D.h" />
+    <ClInclude Include="src\Frustum.h" />
     <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\LightManager.h" />

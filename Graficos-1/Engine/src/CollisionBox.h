@@ -31,6 +31,10 @@ private:
 	
 	unsigned int vao, vbo, ebo;
 	std::vector<unsigned int> indicesVector;
+
+	vec3 mins;
+	vec3 maxs;
+
 public:
 	CollisionBox();
 	~CollisionBox();
@@ -42,6 +46,8 @@ public:
 	static Shader* wireframeShader;
 	void Setup();
 	vec3 vertices[TOTALVERTICES];
+	vec3 GetVec3Max();
+	vec3 GetVec3Min();
 };
 
 #endif

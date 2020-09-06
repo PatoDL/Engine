@@ -1,9 +1,14 @@
 #include "Renderer.h"
 #include <glew.h>
 #include <glfw3.h>
+#include "Entity3D.h"
+
+
 using namespace std;
 
 Renderer* Renderer::renderer = nullptr;
+
+vector<BSPPlane*> Renderer::planes;
 
 bool Renderer::Start(Window* wnd) {
 	cout << "Renderer::Start()" << endl;
@@ -34,6 +39,13 @@ bool Renderer::Start(Window* wnd) {
 
 	renderer = this;
 	
+	f = new Frustum(cam->GetViewMatrix() * GetProjMatrix());
+
+	for (int i = 0; i < planes.size(); i++)
+	{
+		planes[i]->CheckPositionWithPlane(Camera::thisCam->GetCameraPosition(), true);
+	}
+
 	return true;
 }
 
@@ -161,6 +173,41 @@ Camera* Renderer::GetCam()
 glm::mat4 Renderer::GetProjMatrix()
 {
 	return ProjectionMatrix;
+}
+
+void Renderer::CheckListedAndAddIfNot(string name)
+{
+	bool found = false;
+	for (list<string>::iterator itBeg = CulledEntities.begin(); itBeg != CulledEntities.end(); itBeg++)
+	{
+		if (name == *itBeg)
+		{
+			found = true;
+		}
+	}
+
+	if (!found)
+	{
+		CulledEntities.push_front(name);
+		//cout << name.c_str() << endl;
+	}
+}
+
+void Renderer::CheckListedAndRemoveIfIs(string name)
+{
+	bool found = false;
+	for (list<string>::iterator itBeg = CulledEntities.begin(); itBeg != CulledEntities.end(); itBeg++)
+	{
+		if (name == *itBeg)
+		{
+			found = true;
+		}
+	}
+
+	if (found)
+	{
+		CulledEntities.remove(name);
+	}
 }
 
 Renderer::Renderer() {

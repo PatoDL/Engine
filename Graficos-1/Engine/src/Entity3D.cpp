@@ -26,10 +26,6 @@ Entity3D::Entity3D(Entity3D* newParent)
 
 	collisionBox = new CollisionBox();
 	AABB = new CollisionBox();
-	
-	collisionBox->GenerateBoundingBox(bounds);
-	AABB->GenerateBoundingBox(bounds);
-	//BaseGame::GetRootEntity()->CalculateBoundsWithChilds();
 }
 
 Entity3D::Entity3D(string newName)
@@ -41,9 +37,8 @@ Entity3D::Entity3D(string newName)
 	collisionBox = new CollisionBox();
 	AABB = new CollisionBox();
 	
-	collisionBox->GenerateBoundingBox(bounds);
-	AABB->GenerateBoundingBox(bounds);
-
+	/*BaseGame::GetRootEntity()->CalculateBoundsWithChilds();
+	BaseGame::GetRootEntity()->UpdateModelMatAndBoundingBox();*/
 }
 
 Entity3D::~Entity3D()
@@ -141,7 +136,15 @@ void Entity3D::Draw(Shader shader)
 		}
 		
 	}
-	AABB->DrawCollisionBox(worldModel);
+	if (Renderer::renderer->f->IsBoxVisible(AABB->GetVec3Min(), AABB->GetVec3Max()))
+	{
+		Renderer::renderer->CheckListedAndRemoveIfIs(name);
+		AABB->DrawCollisionBox(worldModel);
+	}
+	else
+	{
+		Renderer::renderer->CheckListedAndAddIfNot(name);
+	}
 }
 
 void Entity3D::UpdateModelMatrix()
@@ -160,6 +163,11 @@ void Entity3D::UpdateModelMatrix()
 void Entity3D::SetName(string newName)
 {
 	name = newName;
+}
+
+void Entity3D::SetTag(string newTag)
+{
+	tag = newTag;
 }
 
 void Entity3D::SetModelMatrix(glm::mat4 newModelMatrix)
@@ -209,10 +217,13 @@ Bounds Entity3D::UpdateModelMatAndBoundingBox()
 
 void Entity3D::CalculateBoundsWithChilds()
 {
-	for (list<Entity3D*>::iterator itBeg = childs.begin(); itBeg != childs.end(); ++itBeg)
+	if (!childs.empty())
 	{
-		(*itBeg)->CalculateBoundsWithChilds();
-		bounds = CalculateBounds(bounds,(*itBeg)->bounds);
+		for (list<Entity3D*>::iterator itBeg = childs.begin(); itBeg != childs.end(); ++itBeg)
+		{
+			(*itBeg)->CalculateBoundsWithChilds();
+			bounds = CalculateBounds(bounds, (*itBeg)->bounds);
+		}
 	}
 	
 	collisionBox->GenerateBoundingBox(bounds);

@@ -28,6 +28,7 @@ class DLLEXPORT Entity3D
 protected:
 	Entity3D* parent;
 	string name;
+	string tag = "untagged";
 	list<Entity3D*> childs;
 	vec3 position;
 	vec3 rotation;
@@ -58,6 +59,8 @@ public:
 	//////////////////////////
 	string GetName() const { return name; }
 	void SetName(string newName);
+	string GetTag() const { return tag; }
+	void SetTag(string newTag);
 	glm::mat4 GetModelMatrix() const { return modelMatrix; }
 	void SetModelMatrix(glm::mat4 newModelMatrix);
 	////////////////////////////

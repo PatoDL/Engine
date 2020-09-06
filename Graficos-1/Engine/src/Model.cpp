@@ -6,7 +6,7 @@
 #include <assimp/postprocess.h>
 #include <gtc/type_ptr.hpp>
 #include "gtx/quaternion.hpp"
-
+#include "BSPPlane.h"
 #include <iostream>
 
 #ifndef STB_IMAGE_IMPLEMENTATION
@@ -81,16 +81,8 @@ void Model::processNode(aiNode *node, const aiScene *scene, Entity3D* par)
 		thisNode = new Mesh(processMesh(mesh, scene, par));
 		thisNode->SetModelMatrix(AssimpTransformToGlm(&node->mTransformation));
 		thisNode->SetName(node->mName.C_Str());
-		if(thisNode->GetName()== "Cube.037__0" || thisNode->GetName() == "Cylinder.033__0")
-		{
-			Entity3D* ent = BaseGame::GetRootEntity()->GetChild("group");
-			if (!ent)
-			{
-				ent = new Entity3D(par);
-				ent->SetName("group");
-			}
-			thisNode->SetParent(ent);
-		}
+
+		
 	}
 
 	if (!thisNode)
@@ -118,9 +110,19 @@ void Model::processNode(aiNode *node, const aiScene *scene, Entity3D* par)
 		Mesh* m = static_cast<Mesh*>(thisNode);
 		vector<vec3> verticesPositions;
 		m->GetVerticesPositions(verticesPositions);
+		if (thisNode->GetName().find("BSP") != string::npos)
+		{
+			thisNode->SetTag("BSP");
+			Renderer::planes.push_back(new BSPPlane(verticesPositions[0], verticesPositions[1], verticesPositions[2]));
+		}
 		thisNode->bounds = thisNode->GenerateBoundsByVertex(verticesPositions);
 	}
 	thisNode->GetCollisionBox()->Setup();
+}
+
+void Parse(string s, string search)
+{
+
 }
 
 Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, Entity3D* par)

@@ -1,0 +1,11 @@
+BOUNDING BOX WHEN IO CREATE NEW ENTITY3D AFTER MOVING ANOTHER ALREADY CREATED.
+THE BUG CONSISTS IN A WEIRD TRANSLATION OF THE ALREADY CREATED BOUNDING BOXES.
+FUCK THIS PROGRAM.
+FUCK OPENGL.
+FUCK C++.
+FUCK STEVE JOBS.
+
+//////////////////////////////////////////////////////////////////////////////
+
+frustum culling is only avoiding drawing bounding boxes, it should skip model rendering aswell.
+refactoring this in the renderer class would be the best option.

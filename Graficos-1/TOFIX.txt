@@ -5,7 +5,3 @@ FUCK OPENGL.
 FUCK C++.
 FUCK STEVE JOBS.
 
-//////////////////////////////////////////////////////////////////////////////
-
-frustum culling is only avoiding drawing bounding boxes, it should skip model rendering aswell.
-refactoring this in the renderer class would be the best option.

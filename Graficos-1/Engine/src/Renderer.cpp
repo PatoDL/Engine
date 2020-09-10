@@ -2,7 +2,9 @@
 #include <glew.h>
 #include <glfw3.h>
 #include "Entity3D.h"
-
+#include "CollisionBox.h"
+#include "Mesh.h"
+#include "BaseGame.h"
 
 using namespace std;
 
@@ -175,39 +177,79 @@ glm::mat4 Renderer::GetProjMatrix()
 	return ProjectionMatrix;
 }
 
-void Renderer::CheckListedAndAddIfNot(string name)
+bool Renderer::CheckVisibility(Entity3D* e)
 {
-	bool found = false;
-	for (list<string>::iterator itBeg = CulledEntities.begin(); itBeg != CulledEntities.end(); itBeg++)
+	if (bspEnabled)
 	{
-		if (name == *itBeg)
+		if (e->GetTag() != "BSP")
 		{
-			found = true;
+			for (int i = 0; i < planes.size(); i++)
+			{
+				if (!planes[i]->CheckAABBWithPlane(e->bounds))
+				{
+					return false;
+				}
+			}
 		}
 	}
 
-	if (!found)
+	if (!f->IsBoxVisible(e->AABB->GetVec3Min(), e->AABB->GetVec3Max()) && frustumCullingEnabled)
+		return false;
+
+	if (e->GetTag() != "BSP")
 	{
-		CulledEntities.push_front(name);
-		//cout << name.c_str() << endl;
+		culledEntitiesAmount++;
+		//cout << e->GetName() << " - " << e->entityType << endl;
 	}
+
+	
+	return true;
 }
 
-void Renderer::CheckListedAndRemoveIfIs(string name)
+void Renderer::DrawMesh(Shader shader, Bounds* b, mat4 worldModel, Mesh* m)
 {
-	bool found = false;
-	for (list<string>::iterator itBeg = CulledEntities.begin(); itBeg != CulledEntities.end(); itBeg++)
+	shader.use();
+
+	glm::mat4 projection = Renderer::renderer->GetProjMatrix();
+	glm::mat4 view = Camera::thisCam->GetViewMatrix();
+
+	shader.setMat4("proj", projection);
+	shader.setMat4("view", view);
+	shader.setMat4("model", worldModel);
+
+	// bind appropriate textures
+	unsigned int diffuseNr = 1;
+	unsigned int specularNr = 1;
+	unsigned int normalNr = 1;
+	unsigned int heightNr = 1;
+	for (unsigned int i = 0; i < m->textures.size(); i++)
 	{
-		if (name == *itBeg)
-		{
-			found = true;
-		}
+		glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
+		// retrieve texture number (the N in diffuse_textureN)
+		string number;
+		string name = m->textures[i].type;
+		if (name == "texture_diffuse")
+			number = std::to_string(diffuseNr++);
+		else if (name == "texture_specular")
+			number = std::to_string(specularNr++); // transfer unsigned int to stream
+		else if (name == "texture_normal")
+			number = std::to_string(normalNr++); // transfer unsigned int to stream
+		else if (name == "texture_height")
+			number = std::to_string(heightNr++); // transfer unsigned int to stream
+
+		// now set the sampler to the correct texture unit
+		shader.setInt((name + number).c_str(), i);
+		// and finally bind the texture
+		glBindTexture(GL_TEXTURE_2D, m->textures[i].id);
 	}
 
-	if (found)
-	{
-		CulledEntities.remove(name);
-	}
+	// draw mesh
+	glBindVertexArray(m->VAO);
+	glDrawElements(GL_TRIANGLES, m->indices.size(), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+
+	// always good practice to set everything back to defaults once configured.
+	glActiveTexture(GL_TEXTURE0);
 }
 
 Renderer::Renderer() {

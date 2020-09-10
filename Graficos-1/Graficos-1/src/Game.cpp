@@ -57,7 +57,7 @@ bool Game::OnStart()
 
 	cam->SetCameraSpeed(2.5f);
 	
-	m = new Model("res/Planes/PlanesZneg.fbx", false);
+	m = new Model("res/Planes/PlanesZneg2.fbx", false);
 
 	m2 = new Model("res/backpack/backpack.obj", true);
 
@@ -204,6 +204,16 @@ bool Game::OnUpdate()
 		movableEntity->SetPos(vec3(0.f, 0.f, yRot2));
 	}
 
+	if (Input::GetKeyPressedOnce(GLFW_KEY_0))
+	{
+		render->SetBSPEnabled(!render->GetBSPEnabled());
+	}
+
+	if (Input::GetKeyPressedOnce(GLFW_KEY_9))
+	{
+		render->SetFCEnabled(!render->GetFCEnabled());
+	}
+
 	if (Input::GetKeyPressed(GLFW_KEY_ESCAPE))
 	{
 		return false;
@@ -214,9 +224,9 @@ bool Game::OnUpdate()
 
 void Game::OnDraw()
 {
-	/*sq->Draw();
-	spr->Draw();*/
 	BaseGame::GetRootEntity()->Draw(*shad);
+	cout << render->culledEntitiesAmount << endl;
+	render->culledEntitiesAmount = 0;
 }
 
 bool Game::OnStop()

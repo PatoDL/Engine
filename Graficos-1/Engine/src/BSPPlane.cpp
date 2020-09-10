@@ -1,4 +1,5 @@
 #include "BSPPlane.h"
+#include "CollisionBox.h"
 
 BSPPlane::BSPPlane(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3)
 {
@@ -27,7 +28,20 @@ bool BSPPlane::CheckPositionWithPlane(glm::vec3 pos, bool isCamera)
 	return false;
 }
 
-bool BSPPlane::CheckAABBWithPlane(CollisionBox * aabb)
+bool BSPPlane::CheckAABBWithPlane(Bounds b)
 {
+	if (CheckPositionWithPlane({ b.minX, b.minY, b.minZ },false) ||
+		CheckPositionWithPlane({ b.minX, b.minY, b.maxZ },false) ||
+		CheckPositionWithPlane({ b.minX, b.maxY, b.minZ },false) ||
+		CheckPositionWithPlane({ b.minX, b.maxY, b.maxZ },false) ||
+		CheckPositionWithPlane({ b.maxX, b.minY, b.maxZ },false) ||
+		CheckPositionWithPlane({ b.maxX, b.minY, b.minZ },false) ||
+		CheckPositionWithPlane({ b.maxX, b.maxY, b.minZ },false) ||
+		CheckPositionWithPlane({ b.maxX, b.maxY, b.maxZ },false))
+	{
+		return true;
+	}
+
+	return false;
 	return false;
 }

@@ -81,8 +81,6 @@ void Model::processNode(aiNode *node, const aiScene *scene, Entity3D* par)
 		thisNode = new Mesh(processMesh(mesh, scene, par));
 		thisNode->SetModelMatrix(AssimpTransformToGlm(&node->mTransformation));
 		thisNode->SetName(node->mName.C_Str());
-
-		
 	}
 
 	if (!thisNode)
@@ -118,11 +116,6 @@ void Model::processNode(aiNode *node, const aiScene *scene, Entity3D* par)
 		thisNode->bounds = thisNode->GenerateBoundsByVertex(verticesPositions);
 	}
 	thisNode->GetCollisionBox()->Setup();
-}
-
-void Parse(string s, string search)
-{
-
 }
 
 Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, Entity3D* par)
@@ -270,4 +263,3 @@ unsigned int TextureFromFile(const char *path, const string &directory, bool gam
 
 	return textureID;
 }
-

@@ -9,6 +9,8 @@
 #include "Camera.h"
 #include "Frustum.h"
 #include "BSPPlane.h"
+#include <vector>
+#include <list>
 
 using namespace std;
 using namespace glm;
@@ -25,8 +27,8 @@ private:
 	glm::mat4 WorldMatrix;
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 WVP;
-	list<string> CulledEntities;
-
+	bool bspEnabled = true;
+	bool frustumCullingEnabled = true;
 public:
 	bool Start(Window* wnd);
 	bool Stop();
@@ -49,13 +51,22 @@ public:
 	Camera* GetCam();
 	glm::mat4 GetProjMatrix();
 
+	void DrawMesh(Shader shader, struct Bounds* b, mat4 worldModel, class Mesh* m);
+
 	Frustum* f;
+	
+	void SetBSPEnabled(bool e) { bspEnabled = e; }
 
-	void CheckListedAndAddIfNot(string name);
-	void CheckListedAndRemoveIfIs(string name);
+	bool GetBSPEnabled() { return bspEnabled; }
 
+	void SetFCEnabled(bool e) { frustumCullingEnabled = e; }
+
+	bool GetFCEnabled() { return frustumCullingEnabled; }
+
+	int culledEntitiesAmount = 0;
+
+	bool CheckVisibility(class Entity3D* e);
 	static Renderer* renderer;
-
 	static vector<BSPPlane*> planes;
 
 	Renderer();

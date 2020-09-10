@@ -13,6 +13,7 @@ BaseGame::BaseGame() {
 }
 BaseGame::~BaseGame() {
 }
+
 bool BaseGame::Start(int h, int w, char* name) {
 	cout << "GameBase::Start()" << endl;
 

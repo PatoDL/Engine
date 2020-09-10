@@ -13,7 +13,7 @@ private:
 public:
 	BSPPlane(glm::vec3 point1, glm::vec3 point2, glm::vec3 point3);
 	bool CheckPositionWithPlane(glm::vec3 pos, bool isCamera);
-	bool CheckAABBWithPlane(class CollisionBox* aabb);
+	bool CheckAABBWithPlane(struct Bounds b);
 };
 
 #endif

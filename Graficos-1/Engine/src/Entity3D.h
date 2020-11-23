@@ -34,7 +34,7 @@ protected:
 	vec3 rotation;
 	vec3 scale;
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	bool shallDraw = true;
+	
 	CollisionBox* collisionBox;
 	
 	vector<vec3> verticesVector;
@@ -76,6 +76,7 @@ public:
 	Bounds GenerateBoundsByVertex(vector<vec3> v);
 	void CalculateBoundsWithChilds();
 	CollisionBox* AABB;
+	bool shallDraw = true;
 	////////////////////////////
 	void GetAllChildsNames();
 	void GetAllChildsTypes();

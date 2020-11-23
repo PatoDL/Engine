@@ -125,7 +125,6 @@ void Entity3D::Draw(Shader shader)
 	for (list<Entity3D*>::iterator itBeg = childs.begin(); itBeg != childs.end(); ++itBeg)
 	{
 		Entity3D* ent = (*itBeg);
-		ent->shallDraw = Renderer::renderer->CheckVisibility(ent);
 		if (ent->shallDraw)
 		{
 			if (ent->entityType == mesh)
@@ -135,9 +134,12 @@ void Entity3D::Draw(Shader shader)
 			}
 			ent->Draw(shader);
 		}
+		ent->shallDraw = true;
 	}
 	if(shallDraw)
 		AABB->DrawCollisionBox(worldModel);
+
+	shallDraw = true;
 }
 
 void Entity3D::UpdateModelMatrix()

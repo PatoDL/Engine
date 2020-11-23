@@ -177,33 +177,63 @@ glm::mat4 Renderer::GetProjMatrix()
 	return ProjectionMatrix;
 }
 
-bool Renderer::CheckVisibility(Entity3D* e)
+void Renderer::CheckBSPVisibility(Entity3D* e, int plane)
 {
+	if (!e->shallDraw)
+		return;
+
 	if (bspEnabled)
 	{
 		if (e->GetTag() != "BSP")
 		{
-			for (int i = 0; i < planes.size(); i++)
+			if (!planes[plane]->CheckAABBWithPlane(e->bounds))
 			{
-				if (!planes[i]->CheckAABBWithPlane(e->bounds))
-				{
-					return false;
-				}
+				e->shallDraw = false;
 			}
 		}
 	}
-
-	if (!f->IsBoxVisible(e->AABB->GetVec3Min(), e->AABB->GetVec3Max()) && frustumCullingEnabled)
-		return false;
-
-	if (e->GetTag() != "BSP")
+		
+	if (e->shallDraw)
 	{
-		culledEntitiesAmount++;
-		//cout << e->GetName() << " - " << e->entityType << endl;
-	}
-
+		if (e->GetTag() != "BSP" && plane == 2)
+		{
+			culledEntitiesAmount++;
+			//cout << e->GetName().c_str()<<endl;
+		}
 	
-	return true;
+		for (list<Entity3D*>::iterator iterB = e->childs.begin(); iterB != e->childs.end(); ++iterB)
+		{
+			CheckBSPVisibility((*iterB), plane);
+		}
+	}
+}
+
+void Renderer::CheckPlanes()
+{
+	for (int i = 0; i < planes.size(); i++)
+	{
+		CheckBSPVisibility(BaseGame::GetRootEntity(), i);
+	}
+}
+
+void Renderer::CheckFrustumCulling(Entity3D * e)
+{
+	if (!f->IsBoxVisible(e->AABB->GetVec3Min(), e->AABB->GetVec3Max()) && frustumCullingEnabled)
+	{
+		e->shallDraw = false;
+	}
+	else
+	{
+		//if (e->GetTag() != "BSP")
+		//{
+		//	culledEntitiesAmount++;
+		//}
+
+		for (list<Entity3D*>::iterator iterB = e->childs.begin(); iterB != e->childs.end(); ++iterB)
+		{
+			CheckFrustumCulling((*iterB));
+		}
+	}
 }
 
 void Renderer::DrawMesh(Shader shader, Bounds* b, mat4 worldModel, Mesh* m)
@@ -254,7 +284,6 @@ void Renderer::DrawMesh(Shader shader, Bounds* b, mat4 worldModel, Mesh* m)
 
 Renderer::Renderer() {
 }
-
 
 Renderer::~Renderer() {
 }

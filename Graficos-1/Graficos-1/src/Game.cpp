@@ -114,6 +114,7 @@ float yRot2 = 0.f;
 float at = 1.0f;
 
 vec3 newscale = { 1.f,1.f,1.f };
+float time = 0;
 
 bool Game::OnUpdate()
 {
@@ -121,8 +122,8 @@ bool Game::OnUpdate()
 	shad->setVec3("viewPosition", cam->GetCameraPosition());
 	shad->setVec3("viewDirection", glm::normalize(cam->GetCameraDirection()));
 	
-
-	glm::vec3 objColor = { 1.0f,1.0f,1.0f };
+	time += BaseGame::GetDeltaTime();
+	glm::vec3 objColor = {0.0f,sin(time) / 2.0f + 0.5f,0.0f };
 
 	pointLight->SetAttenuation(at);
 	
@@ -130,9 +131,9 @@ bool Game::OnUpdate()
 
 	spotLight->SetPosition(cam->GetCameraPosition());
 	spotLight->SetDirection(cam->GetCameraDirection());
+
 	shad->use();
 	shad->setInt("lightsAmount", PointLight::GetPointLightCount());
-	
 	shad->setVec3("objectColor", objColor);
 
 	pointLight->SetPosition(plpos);
@@ -224,6 +225,8 @@ bool Game::OnUpdate()
 
 void Game::OnDraw()
 {
+	render->CheckPlanes();
+	render->CheckFrustumCulling(BaseGame::GetRootEntity());
 	BaseGame::GetRootEntity()->Draw(*shad);
 	cout << render->culledEntitiesAmount << endl;
 	render->culledEntitiesAmount = 0;

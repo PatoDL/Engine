@@ -65,8 +65,12 @@ public:
 
 	int culledEntitiesAmount = 0;
 
-	bool CheckVisibility(class Entity3D* e);
 	static Renderer* renderer;
+
+	void CheckBSPVisibility(class Entity3D* e, int plane);
+	void CheckPlanes();
+	void CheckFrustumCulling(class Entity3D* e);
+	
 	static vector<BSPPlane*> planes;
 
 	Renderer();

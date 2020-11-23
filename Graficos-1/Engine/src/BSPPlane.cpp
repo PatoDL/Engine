@@ -43,5 +43,4 @@ bool BSPPlane::CheckAABBWithPlane(Bounds b)
 	}
 
 	return false;
-	return false;
 }
